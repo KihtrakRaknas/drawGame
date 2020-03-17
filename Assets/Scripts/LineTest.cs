@@ -15,6 +15,8 @@ public class LineTest : MonoBehaviour
     Vector3 oldPos = new Vector3(0, 0, 0);
     int pointNum = 0;
     List<Vector3> positions = new List<Vector3>();
+    List<GameObject> colliders = new List<GameObject>();
+    static public bool drawing = false;
 
     void Start()
     {
@@ -28,9 +30,8 @@ public class LineTest : MonoBehaviour
         lr.materials[0] = Black;
         lr.SetPosition(0, oldPos);
 
-        addLineSegment(startPos);
         
-        lr.Simplify(0.1f);
+        lr.Simplify(1f);
     }
 
     void addLineSegment(Vector3 end)
@@ -41,11 +42,11 @@ public class LineTest : MonoBehaviour
         {
             positions.Add(end);
             lr.positionCount = positions.Count + 1;
-            print(pointNum);
             GameObject coll = new GameObject("colliderBoi");
             coll.transform.parent = this.gameObject.transform;
+            colliders.Add(coll);
             BoxCollider boxCollider = coll.AddComponent<BoxCollider>();
-            coll.transform.position = (oldPos + end) / 2; // + new Vector3(0, width, width)/2; 
+            coll.transform.localPosition = (oldPos + end) / 2; // + new Vector3(0, width, width)/2; 
             float hieght = (end - oldPos).y;
             float depth = (end - oldPos).z;
             float widthh = (end - oldPos).x;
@@ -54,25 +55,21 @@ public class LineTest : MonoBehaviour
 
             if (((hieght > 0) == true && (depth > 0) == true && (widthh > 0) == true))
             {
-                print("SAME");
                 mult = -1;
                 multz = 1;
             }
             else if (((hieght > 0) == false && (depth > 0) == true && (widthh > 0) == true))
             {
-                print("height neg");
                 mult = -1;
                 multz = 1;
             }
             else if (((hieght > 0) == true && (depth > 0) == false && (widthh > 0) == true))
             {
-                print("depth neg");
                 mult = -1;
                 multz = 1;
             }
             else if (((hieght > 0) == false && (depth > 0) == false && (widthh > 0) == true))
             {
-                print("width neg");
                 mult = -1;
                 multz = 1;
             }
@@ -87,7 +84,6 @@ public class LineTest : MonoBehaviour
             else
                 yRot = 0;
             float zRot = Mathf.Rad2Deg * Mathf.Asin(hieght / dist);
-            print(""+ depth +"/"+  "Mathf.Sqrt(" + Mathf.Pow(widthh, 2) +"+" +Mathf.Pow(depth, 2) );
             coll.transform.localRotation = Quaternion.Euler(0, mult * yRot, multz * zRot); //
             boxCollider.size = new Vector3(dist, width, width);
             oldPos = end;
@@ -99,7 +95,18 @@ public class LineTest : MonoBehaviour
     }
 
     Vector2 oldInput;
-    bool firstClick = false;
+    bool firstClick = true;
+    void Reset()
+    {
+        oldPos = new Vector3(0, 0, 0);
+        List<Vector3> positions = new List<Vector3>();
+        lr.positionCount = 0;
+        for(int i = colliders.Count-1; i!= -1; i--)
+        {
+            Destroy( colliders[i] );
+        }
+        colliders.Clear();
+    }
 
     void Update()
     {
@@ -110,8 +117,10 @@ public class LineTest : MonoBehaviour
             if (touch.phase == TouchPhase.Began)
             {
                 oldInput = touch.position;
+                Reset();
                 //List<Vector3> positions = new List<Vector3>();
-                GetComponent<Rigidbody>().isKinematic = false;
+                //GetComponent<Rigidbody>().useGravity = false;
+                drawing = true;
             }
 
             if (touch.phase == TouchPhase.Moved)
@@ -122,7 +131,8 @@ public class LineTest : MonoBehaviour
             }
             if (touch.phase == TouchPhase.Ended)
             {
-                GetComponent<Rigidbody>().isKinematic = true;
+                GetComponent<Rigidbody>().useGravity = true;
+                drawing = false;
             }
         }
 
@@ -131,23 +141,26 @@ public class LineTest : MonoBehaviour
             if (firstClick == true) {
                 firstClick = false;
                 oldInput = Input.mousePosition;
-                GetComponent<Rigidbody>().isKinematic = false;
+                Reset();
+                drawing = true;
+                //GetComponent<Rigidbody>().useGravity = false;
             }
             else
             {
                 Vector2 relitivePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - oldInput;
                 relitivePos /= Screen.width/10;
-
+                print(transform.localEulerAngles.z);
+                relitivePos = Quaternion.AngleAxis(-transform.localEulerAngles.z, Vector3.forward) * relitivePos;
                 addLineSegment(new Vector3(relitivePos.x, relitivePos.y, 0));
             }
-            print("CLICK");
         }
         else
         {
             if (!firstClick)
             {
                 firstClick = true;
-                GetComponent<Rigidbody>().isKinematic = true;
+                drawing = false;
+                GetComponent<Rigidbody>().useGravity = true;
             }
             
         }
