@@ -5,8 +5,6 @@ using UnityEngine;
 public class LineTest : MonoBehaviour
 {
     LineRenderer lr;
-    public GameObject start;
-    public GameObject end;
     public Material Black;
     float dist;
     float counter = 0;
@@ -22,8 +20,6 @@ public class LineTest : MonoBehaviour
     {
         lr = GetComponent<LineRenderer>();
 
-        Vector3 startPos = start.transform.position;
-        Vector3 endPos = end.transform.position;
 
         lr.startWidth = width;
         lr.endWidth = width;
