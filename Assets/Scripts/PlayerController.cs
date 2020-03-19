@@ -27,12 +27,18 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float xVel = -Input.GetAxis("Horizontal");
-        float xFinal = xVel * Time.deltaTime*6;
-        if((body.angularVelocity.z>=0 && xFinal<=0) || (body.angularVelocity.z <= 0 && xFinal >= 0))
-            body.angularVelocity = new Vector3(body.angularVelocity.x, body.angularVelocity.y, body.angularVelocity.z / (60 * Time.deltaTime));
-        body.angularVelocity = new Vector3(body.angularVelocity.x, body.angularVelocity.y, body.angularVelocity.z + xFinal);
-        if(Mathf.Abs(body.angularVelocity.z)>=10)
-            body.angularVelocity = new Vector3(body.angularVelocity.x, body.angularVelocity.y, 5 * body.angularVelocity.z / Mathf.Abs(body.angularVelocity.z));
+        if (LineTest.drawing == false) { 
+            float xVel = -Input.GetAxis("Horizontal");
+            float xFinal = xVel * Time.deltaTime * 6;
+            if ((body.angularVelocity.z >= 0 && xFinal <= 0) || (body.angularVelocity.z <= 0 && xFinal >= 0))
+                body.angularVelocity = new Vector3(body.angularVelocity.x, body.angularVelocity.y, body.angularVelocity.z / (60 * Time.deltaTime));
+            body.angularVelocity = new Vector3(body.angularVelocity.x, body.angularVelocity.y, body.angularVelocity.z + xFinal);
+            if (Mathf.Abs(body.angularVelocity.z) >= 10)
+                body.angularVelocity = new Vector3(body.angularVelocity.x, body.angularVelocity.y, 5 * body.angularVelocity.z / Mathf.Abs(body.angularVelocity.z));
+        }
+        else
+        {
+            body.angularVelocity = new Vector3(0, 0, 0);
+        }
     }
 }

@@ -15,6 +15,7 @@ public class LineTest : MonoBehaviour
     List<Vector3> positions = new List<Vector3>();
     List<GameObject> colliders = new List<GameObject>();
     static public bool drawing = false;
+    static public Vector3 averagePos = new Vector3(0,0,0);
 
     void Start()
     {
@@ -38,6 +39,13 @@ public class LineTest : MonoBehaviour
         {
             positions.Add(end);
             lr.positionCount = positions.Count + 1;
+
+            averagePos = new Vector3(0, 0, 0);
+            for (int i = positions.Count - 1; i != -1; i--)
+            {
+                averagePos += positions[i] / positions.Count;
+            }
+
             GameObject coll = new GameObject("colliderBoi");
             coll.transform.parent = this.gameObject.transform;
             colliders.Add(coll);
@@ -96,6 +104,7 @@ public class LineTest : MonoBehaviour
     {
         oldPos = new Vector3(0, 0, 0);
         List<Vector3> positions = new List<Vector3>();
+        
         lr.positionCount = 0;
         for(int i = colliders.Count-1; i!= -1; i--)
         {
