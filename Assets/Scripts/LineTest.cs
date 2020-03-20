@@ -16,6 +16,7 @@ public class LineTest : MonoBehaviour
     List<GameObject> colliders = new List<GameObject>();
     static public bool drawing = false;
     static public Vector3 averagePos = new Vector3(0,0,0);
+    Rigidbody body;
 
     void Start()
     {
@@ -29,6 +30,7 @@ public class LineTest : MonoBehaviour
 
         
         lr.Simplify(1f);
+        body = GetComponent<Rigidbody>();
     }
 
     void addLineSegment(Vector3 end)
@@ -37,6 +39,15 @@ public class LineTest : MonoBehaviour
         float dist = Vector3.Distance(oldPos, end);
         if (dist != 0)
         {
+            addLineSegmentIgnoreDist(end);
+        }
+        
+    }
+
+    void addLineSegmentIgnoreDist(Vector3 end)
+    {
+
+        float dist = Vector3.Distance(oldPos, end);
             positions.Add(end);
             lr.positionCount = positions.Count + 1;
 
@@ -83,7 +94,7 @@ public class LineTest : MonoBehaviour
 
             float xRot = Mathf.Rad2Deg * Mathf.Asin(widthh / dist);
             float yRot;
-            if (depth!=0)
+            if (depth != 0)
                 yRot = Mathf.Rad2Deg * Mathf.Asin(depth / Mathf.Sqrt(Mathf.Pow(widthh, 2) + Mathf.Pow(depth, 2)));
             else
                 yRot = 0;
@@ -94,16 +105,14 @@ public class LineTest : MonoBehaviour
             pointNum++;
 
             lr.SetPosition(pointNum, end);
-        }
-        
     }
 
     Vector2 oldInput;
     bool firstClick = true;
-    void Reset()
+    public void Reset()
     {
         oldPos = new Vector3(0, 0, 0);
-        List<Vector3> positions = new List<Vector3>();
+        positions = new List<Vector3>();
         
         lr.positionCount = 0;
         for(int i = colliders.Count-1; i!= -1; i--)
@@ -111,6 +120,16 @@ public class LineTest : MonoBehaviour
             Destroy( colliders[i] );
         }
         colliders.Clear();
+        pointNum = 0;
+        addLineSegmentIgnoreDist(new Vector3(0, 0, 0));
+    }
+    public void Restart()
+    {
+        body.angularVelocity = new Vector3(0, 0, 0);
+        body.velocity = new Vector3(0, 0, 0);
+        Reset();
+        body.useGravity = false;
+        this.transform.position = new Vector3(0, 0, 0);
     }
 
     void Update()
@@ -136,7 +155,7 @@ public class LineTest : MonoBehaviour
             }
             if (touch.phase == TouchPhase.Ended)
             {
-                GetComponent<Rigidbody>().useGravity = true;
+                body.useGravity = true;
                 drawing = false;
             }
         }
@@ -148,7 +167,6 @@ public class LineTest : MonoBehaviour
                 oldInput = Input.mousePosition;
                 Reset();
                 drawing = true;
-                //GetComponent<Rigidbody>().useGravity = false;
             }
             else
             {
@@ -164,8 +182,11 @@ public class LineTest : MonoBehaviour
             if (!firstClick)
             {
                 firstClick = true;
-                drawing = false;
-                GetComponent<Rigidbody>().useGravity = true;
+                if (positions.Count>0)
+                {
+                    drawing = false;
+                    body.useGravity = true;
+                }
             }
             
         }

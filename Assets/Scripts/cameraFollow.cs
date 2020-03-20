@@ -24,7 +24,7 @@ public class cameraFollow : MonoBehaviour
         float wiggle = 3; 
         float playY = player.transform.position.y + (Quaternion.AngleAxis(player.transform.localEulerAngles.z, Vector3.forward) * LineTest.averagePos).y + .5f;
         float playX = player.transform.position.x + (Quaternion.AngleAxis(player.transform.localEulerAngles.z, Vector3.forward) * LineTest.averagePos).x;
-        print((Quaternion.AngleAxis(-player.transform.localEulerAngles.z, Vector3.forward) * LineTest.averagePos).x + " "+ (Quaternion.AngleAxis(-player.transform.localEulerAngles.z, Vector3.forward) * LineTest.averagePos).y);
+        //print((Quaternion.AngleAxis(-player.transform.localEulerAngles.z, Vector3.forward) * LineTest.averagePos).x + " "+ (Quaternion.AngleAxis(-player.transform.localEulerAngles.z, Vector3.forward) * LineTest.averagePos).y);
         Vector3 targetPos = new Vector3(playX - wiggle, playY, transform.position.z);
         if(playX < this.transform.position.x)
             targetPos = new Vector3(playX + wiggle, playY, transform.position.z);

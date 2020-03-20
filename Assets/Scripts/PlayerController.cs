@@ -10,24 +10,30 @@ public class PlayerController : MonoBehaviour
     {
         body = GetComponent<Rigidbody>();
     }
-
     // Update is called once per frame
     void Update()
     {
         float z = transform.rotation.eulerAngles.z;
-        if (LineTest.drawing == true)
+        if (LineTest.drawing == true || finished == true)
         {
             z = 0;
+            body.constraints = RigidbodyConstraints.FreezeRotation;
         }
-        transform.rotation = Quaternion.Euler(0, 0, z);
-
-        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        else
+        {
+            body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
+        }
+        
+        if(finished)
+            body.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePosition;
+        else
+            transform.rotation = Quaternion.Euler(0, 0, z);
 
     }
 
     private void FixedUpdate()
     {
-        if (LineTest.drawing == false) { 
+        if (LineTest.drawing == false && finished == false) { 
             float xVel = -Input.GetAxis("Horizontal");
             float xFinal = xVel * Time.deltaTime * 6;
             if ((body.angularVelocity.z >= 0 && xFinal <= 0) || (body.angularVelocity.z <= 0 && xFinal >= 0))
@@ -39,6 +45,44 @@ public class PlayerController : MonoBehaviour
         else
         {
             body.angularVelocity = new Vector3(0, 0, 0);
+        }
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        print("COLL");
+        GameObject otherG = other.gameObject;
+        MeshRenderer mesh = otherG.GetComponent<MeshRenderer>();
+        Material mat = mesh.material;
+        print("\""+mat.name+ "\"");
+        if(mat.name.Contains("Death"))
+        {
+            GetComponent<LineTest>().Restart();
+        }
+        else if (mat.name.Contains("Finish"))
+        {
+            print(this.transform.position);
+            StartNextLevelAnim();
+        }
+    }
+    public static bool finished = false;
+    void StartNextLevelAnim()
+    {
+        if (!finished)
+        {
+            finished = true;
+            GameObject race = Resources.Load("Eraser") as GameObject;
+            if (race == null)
+            {
+                Debug.Log("IT'S NULL!!!");
+            }
+            GameObject newRace = Instantiate(race, this.transform.position+new Vector3(0,10,0), Quaternion.identity);
+            newRace.transform.localScale = new Vector3(350, 350, 350);
+            newRace.transform.localRotation = Quaternion.Euler(0, 90, -90);
+            Rigidbody raceRig = newRace.AddComponent<Rigidbody>();
+            raceRig.useGravity = true;
+
+            //finished = false;
         }
     }
 }
