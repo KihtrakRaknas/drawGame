@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         body = GetComponent<Rigidbody>();
+        finished = false;
     }
     // Update is called once per frame
     void Update()
@@ -17,11 +19,11 @@ public class PlayerController : MonoBehaviour
         if (LineTest.drawing == true || finished == true)
         {
             z = 0;
-            body.constraints = RigidbodyConstraints.FreezeRotation;
+            body.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ;
         }
         else
         {
-            body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
+            body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezePositionZ;
         }
         
         if(finished)
@@ -76,13 +78,24 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("IT'S NULL!!!");
             }
-            GameObject newRace = Instantiate(race, this.transform.position+new Vector3(0,10,0), Quaternion.identity);
+            GameObject newRace = Instantiate(race, this.transform.position+new Vector3(0,30,0), Quaternion.identity);
             newRace.transform.localScale = new Vector3(350, 350, 350);
             newRace.transform.localRotation = Quaternion.Euler(0, 90, -90);
             Rigidbody raceRig = newRace.AddComponent<Rigidbody>();
             raceRig.useGravity = true;
-
+            Invoke("clear", 2);
+            Invoke("switchLevel", 3);
             //finished = false;
         }
     }
+    void switchLevel()
+    {
+        int currLevel = int.Parse(SceneManager.GetActiveScene().name.Substring(5));
+        SceneManager.LoadScene("Level" + (currLevel + 1), LoadSceneMode.Single);
+    }
+    void clear()
+    {
+        GetComponent<LineTest>().Reset();
+    }
+    
 }
