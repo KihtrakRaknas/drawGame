@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LineTest : MonoBehaviour
 {
@@ -125,6 +126,7 @@ public class LineTest : MonoBehaviour
     }
     public void Restart()
     {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
         body.angularVelocity = new Vector3(0, 0, 0);
         body.velocity = new Vector3(0, 0, 0);
         Reset();

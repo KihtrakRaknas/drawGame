@@ -6,7 +6,7 @@ public class SlidingCube : MonoBehaviour
 {
     public float maxPos;
     public bool x;
-    float speed = 500;
+    float speed = -500;
     // Start is called before the first frame update
     void Start()
     {
