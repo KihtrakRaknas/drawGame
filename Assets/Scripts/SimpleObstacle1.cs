@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleObstacle : MonoBehaviour
+public class SimpleObstacle1 : MonoBehaviour
 {
     // Start is called before the first frame update
     float counter=0;
@@ -20,24 +20,20 @@ public class SimpleObstacle : MonoBehaviour
         if (SimpleMovement.collide)
         {
             counter = 0;
-            if (counter < 1)
+            if (counter < 3)
             {
-                transform.Translate(0f, 1f * Time.deltaTime, 0f);
+                transform.Translate(0f, 3f * Time.deltaTime, 0f);
                 collided = true;
             }
         }
-        if (counter > 1 && collided)
+        if (counter > 3 && collided)
         {
             moved = true;
 
         }
         if(!SimpleMovement.collide && moved)
         {
-            counter = 0;
-            if (counter < 0.3)
-            {
-                transform.Translate(0f, -1f * Time.deltaTime, 0f);
-            }
+            transform.Translate(0f, -3f * Time.deltaTime, 0f);
         }
     }
 }
