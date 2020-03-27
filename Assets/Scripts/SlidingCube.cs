@@ -6,7 +6,7 @@ public class SlidingCube : MonoBehaviour
 {
     public float maxPos;
     public bool x;
-    float speed = -500;
+    float speed = -300;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +21,7 @@ public class SlidingCube : MonoBehaviour
             pos = transform.position.z;
         if (Mathf.Abs(pos) > maxPos)
         {
-            speed = -500 * pos/ Mathf.Abs(pos);
+            speed = -300 * pos/ Mathf.Abs(pos);
         }
         print(speed);
         var vel = new Vector3(0f, 0f, speed * Time.deltaTime);
